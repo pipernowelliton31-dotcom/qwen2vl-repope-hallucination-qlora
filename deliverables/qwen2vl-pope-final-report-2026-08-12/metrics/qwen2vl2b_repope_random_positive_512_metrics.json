@@ -1,0 +1,47 @@
+{
+  "benchmark": "RePOPE positive-only paired recall test",
+  "scope_warning": "Only RePOPE yes samples were evaluated. Do not treat this file as full RePOPE Accuracy, Precision, or F1.",
+  "model_path": "Qwen/Qwen2-VL-2B-Instruct",
+  "baseline_predictions": "results/qwen2vl2b_baseline_predictions.jsonl",
+  "baseline_predictions_sha256": "f2a7b192cf85c301635b95ad0c66fd49ecf6d2e62574f985b3f736268794684e",
+  "annotations_dir": "data/raw/repope",
+  "max_visual_tokens": 512,
+  "max_pixels": 401408,
+  "baseline_max_visual_tokens": 256,
+  "quantization": "4-bit NF4 double quantization",
+  "compute_dtype": "torch.bfloat16",
+  "limit_per_split": 0,
+  "splits": [
+    "random"
+  ],
+  "seed": 42,
+  "elapsed_seconds": 451.14995400000043,
+  "metrics": {
+    "random": {
+      "positive_samples": 1159,
+      "detected_yes": 1031,
+      "missed_yes": 128,
+      "unknown": 0,
+      "recall_512": 0.8895599654874892,
+      "baseline_recall_256": 0.8757549611734253,
+      "recall_delta": 0.013805004314063849,
+      "fn_to_tp_improved": 37,
+      "tp_to_fn_regressed": 21,
+      "tp_to_tp_unchanged": 994,
+      "fn_to_fn_unchanged": 107
+    },
+    "overall": {
+      "positive_samples": 1159,
+      "detected_yes": 1031,
+      "missed_yes": 128,
+      "unknown": 0,
+      "recall_512": 0.8895599654874892,
+      "baseline_recall_256": 0.8757549611734253,
+      "recall_delta": 0.013805004314063849,
+      "fn_to_tp_improved": 37,
+      "tp_to_fn_regressed": 21,
+      "tp_to_tp_unchanged": 994,
+      "fn_to_fn_unchanged": 107
+    }
+  }
+}

@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="mist-blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Qwen2-VL-2B 在 POPE/RePOPE 对象存在性幻觉任务上的 QLoRA 微调最终实验报告。">
+  <title>用 QLoRA 缓解 Qwen2-VL 视觉幻觉｜RePOPE 实验</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%234f6572'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia' font-size='36' fill='white'%3EQ%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/report.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到正文</a>
+
+  <nav class="topbar" aria-label="报告导航">
+    <div class="topbar-inner">
+      <a class="brand" href="#top" aria-label="返回报告开头">
+        <span class="brand-mark" aria-hidden="true">Q</span>
+        <span><strong>QLoRA / RePOPE</strong><small>Final research report</small></span>
+      </a>
+      <button class="menu-button" type="button" aria-expanded="false" aria-controls="report-nav">
+        <span class="sr-only">打开报告目录</span>
+        <i></i><i></i><i></i>
+      </button>
+      <div class="nav-links" id="report-nav">
+        <a href="#finding">结论</a>
+        <a href="#frontier">前沿</a>
+        <a href="#dev">Dev</a>
+        <a href="#errors">错误地图</a>
+        <a href="#ablation">视觉预算</a>
+        <a href="#protocol">方法</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero bg-shell" id="top">
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="hero-orbit orbit-one" aria-hidden="true"></div>
+    <div class="hero-orbit orbit-two" aria-hidden="true"></div>
+    <div class="section-container hero-layout">
+      <div class="hero-copy">
+        <p class="eyebrow">Qwen2-VL-2B · QLoRA · RePOPE · 2026</p>
+        <h1 class="hero-title">微调改变的，<br><em>不是一个分数。</em></h1>
+        <p class="hero-deck">它重新分配了漏检与误报；hard negatives 收回了一部分 hallucination，而更多视觉信息第一次同时减少两类错误。</p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="#finding">阅读核心结论</a>
+          <a class="btn-secondary" href="#errors">查看 25 个错误案例</a>
+        </div>
+        <p class="hero-protocol"><span>Baseline protocol</span> fresh E0 inference · 8,185 RePOPE samples · 256 visual tokens</p>
+      </div>
+      <aside class="hero-figure glass-card" aria-label="RePOPE 核心结果摘要">
+        <div class="hero-figure-head">
+          <span class="eyebrow">Best observed</span>
+          <span class="status-dot">E3 · 512 vt</span>
+        </div>
+        <div class="hero-number"><strong>93.39</strong><span>%</span></div>
+        <p>Accuracy</p>
+        <div class="hero-mini-chart" id="hero-mini-chart"></div>
+        <dl class="hero-deltas">
+          <div><dt>Recall</dt><dd>+5.00 pp</dd></div>
+          <div><dt>F1</dt><dd>+2.07 pp</dd></div>
+          <div><dt>FPR</dt><dd class="caution">+1.16 pp</dd></div>
+        </dl>
+        <small>相对 fresh E0 @256vt；512vt 为 post-selection ablation。</small>
+      </aside>
+    </div>
+    <div class="scroll-cue" aria-hidden="true"><span></span>scroll to evidence</div>
+  </header>
+
+  <main id="main-content">
+    <section class="section-block finding-section" id="finding">
+      <div class="section-container">
+        <header class="section-heading reveal">
+          <p class="eyebrow">01 · Central finding</p>
+          <h2>这不是“微调后全面变好”，<br>而是一条可以被移动、也可以被突破的权衡曲线。</h2>
+          <p>Attention QLoRA 提高 sensitivity，也放大 false-positive hallucination；数据分布能缓解它，视觉预算则在同一 adapter 上带来真正的双向纠错。</p>
+          <div class="gradient-divider"></div>
+        </header>
+
+        <div class="finding-ledger reveal-group">
+          <article class="finding-card card-hover reveal">
+            <span class="finding-index">I</span>
+            <p class="finding-kicker">Calibration shift</p>
+            <h3>Attention LoRA 让模型更愿意回答 “yes”。</h3>
+            <p>E1 的 RePOPE Recall 升至 93.36%，但 FPR 同时升至 7.92%。收益主要来自减少 FN，代价是新增 FP。</p>
+          </article>
+          <article class="finding-card card-hover reveal feature">
+            <span class="finding-index">II</span>
+            <p class="finding-kicker">Targeted supervision</p>
+            <h3>改变负样本，比增加 LoRA 容量更有效。</h3>
+            <p>E3 将 adversarial negatives 提高到 4,000 条，较 E1 把 FPR 从 7.92% 压到 5.66%；E2 几乎复制 E1，E4 也没有形成更优 frontier。</p>
+          </article>
+          <article class="finding-card card-hover reveal">
+            <span class="finding-index">III</span>
+            <p class="finding-kicker">Discrimination gain</p>
+            <h3>256→512 visual tokens 同时减少 FN 与 FP。</h3>
+            <p>同一 E3 adapter 上，TP +39、FP −22；Yes Ratio 只变化 +0.21 pp，更符合视觉证据改善，而非单纯阈值漂移。</p>
+          </article>
+        </div>
+
+        <aside class="baseline-note reveal">
+          <span class="note-badge">口径更新</span>
+          <p><strong>所有 RePOPE baseline 比较均已切换为 fresh inference。</strong>旧的 POPE prediction 重评分结果不参与主图、排名或增量计算。</p>
+          <code>TP / FP / TN / FN = 3062 / 187 / 4459 / 477</code>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section-block dark-section" id="frontier">
+      <div class="section-container">
+        <header class="section-heading inverse reveal">
+          <p class="eyebrow">02 · Recall–FPR frontier</p>
+          <h2>每一个点，都是一次错误分配。</h2>
+          <p>向左意味着更少 hallucination，向上意味着更高 sensitivity。最理想的移动方向是左上；E3 的 256→512 是唯一在同一模型上明确向左上移动的消融。</p>
+        </header>
+        <div class="frontier-layout">
+          <div class="dark-card chart-card reveal">
+            <div class="chart-toolbar">
+              <h3>RePOPE operating points</h3>
+              <div class="legend-inline" aria-hidden="true"><span class="base"></span>Base <span class="formal"></span>Formal <span class="explore"></span>Exploratory</div>
+            </div>
+            <div class="chart-host frontier-chart" id="frontier-chart"></div>
+            <p class="chart-note">横轴为 FPR（越低越好），纵轴为 Recall（越高越好）；虚线仅连接非支配点。</p>
+          </div>
+          <aside class="frontier-notes reveal">
+            <article>
+              <span class="data-number">01</span>
+              <h3>Fresh base 仍最保守</h3>
+              <p>FPR 4.03% 为所有点最低，但 Recall 只有 86.52%。</p>
+            </article>
+            <article class="selected">
+              <span class="data-number">02</span>
+              <h3>E3@512 是最佳综合点</h3>
+              <p>Accuracy 93.39%、F1 92.29%，同时比 E3@256 少 61 个错误。</p>
+            </article>
+            <article>
+              <span class="data-number">03</span>
+              <h3>高 Recall 不是免费收益</h3>
+              <p>E3/E4-2000 的 Recall 接近 94%，FPR 却升至约 9%。</p>
+            </article>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block results-section" id="results">
+      <div class="section-container">
+        <header class="section-heading reveal">
+          <p class="eyebrow">03 · External benchmark</p>
+          <h2>把“最好”拆开看，结论才不会写过头。</h2>
+          <p>正式模型、最高 Recall、最低 FPR 和最佳综合点并不是同一个配置。完整表保留这种差异，而不是压成单一冠军。</p>
+        </header>
+        <div class="metric-ribbon reveal" id="metric-ribbon"></div>
+        <div class="table-shell reveal">
+          <div class="table-title">
+            <div><span class="eyebrow">All evaluated configurations</span><h3>RePOPE 完整结果</h3></div>
+            <p>8,185 samples · random / popular / adversarial</p>
+          </div>
+          <div class="table-scroll"><table id="repope-table"><caption class="sr-only">所有 RePOPE 评测配置的完整指标</caption></table></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block dev-section" id="dev">
+      <div class="section-container">
+        <header class="section-heading reveal">
+          <p class="eyebrow">04 · Checkpoint dynamics</p>
+          <h2>训练更久，并没有带来单调改善。</h2>
+          <p>四组实验都在 500、1000、1500、2000 steps 上评测。checkpoint-1000 往往更保守，后期模型重新走向高 Recall / 高 FPR。</p>
+        </header>
+        <div class="dev-small-multiples reveal" id="dev-charts"></div>
+        <div class="table-shell reveal">
+          <div class="table-title">
+            <div><span class="eyebrow">Fixed 2k dev</span><h3>全部 checkpoint 指标</h3></div>
+            <p>同一分层样本 · 1,494 images · seed 42</p>
+          </div>
+          <div class="table-scroll"><table id="dev-table"><caption class="sr-only">E0 与 E1 到 E4 全部 checkpoint 的 dev 指标</caption></table></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block gap-section" id="gap">
+      <div class="section-container gap-layout">
+        <header class="section-heading reveal">
+          <p class="eyebrow">05 · Calibration gap</p>
+          <h2>Dev 排序有用，绝对 FPR 却过于乐观。</h2>
+          <p>COCO-derived dev 基本保留了“谁更保守”的相对关系，但所有代表模型到了 RePOPE，FPR 都显著上升。这是跨数据集 calibration gap，而不是 dev 完全失效。</p>
+          <blockquote>Dev 可以选 operating point，不能替代独立 benchmark。</blockquote>
+        </header>
+        <div class="glass-card gap-card reveal">
+          <div class="chart-toolbar"><h3>FPR：Dev → RePOPE</h3><span>percentage points</span></div>
+          <div class="chart-host" id="gap-chart"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block error-section" id="errors">
+      <div class="section-container">
+        <header class="section-heading inverse reveal">
+          <p class="eyebrow">06 · Error atlas</p>
+          <h2>模型到底错在哪里？</h2>
+          <p>每个 E0–E4 代表模型选择 5 个 RePOPE 错误：至少 2 个 FP、2 个 FN，覆盖三个 split，并加入一个五模型共同失败案例。点击图片可查看原图和所有模型答案。</p>
+        </header>
+        <div class="error-tabs reveal" role="tablist" aria-label="选择错误案例模型" id="error-tabs"></div>
+        <div class="error-summary reveal" id="error-summary"></div>
+        <div class="error-grid" id="error-grid" role="tabpanel"></div>
+        <p class="selection-caveat">这 25 张是用于解释错误模式的诊断性精选案例，不是统计抽样，也不重新裁决 RePOPE 标签。</p>
+      </div>
+    </section>
+
+    <section class="section-block ablation-section" id="ablation">
+      <div class="section-container">
+        <header class="section-heading reveal">
+          <p class="eyebrow">07 · Visual-token ablation</p>
+          <h2>更多视觉信息，不只是让模型更爱说 “yes”。</h2>
+          <p>保持 E3 checkpoint-1000 与 RePOPE 协议不变，仅将视觉预算从 256 提升到 512。237 条预测改变，其中 149 条改善、88 条退化。</p>
+        </header>
+        <div class="ablation-layout">
+          <div class="transition-card glass-card reveal">
+            <div class="transition-heading"><span>256 vt</span><strong>61 fewer errors</strong><span>512 vt</span></div>
+            <div class="transition-flow" id="transition-flow"></div>
+          </div>
+          <div class="ablation-metrics reveal">
+            <article><span>Accuracy</span><strong>+0.745</strong><small>pp</small></article>
+            <article><span>Recall</span><strong>+1.102</strong><small>pp</small></article>
+            <article><span>F1</span><strong>+0.890</strong><small>pp</small></article>
+            <article class="inverse"><span>FPR</span><strong>−0.474</strong><small>pp</small></article>
+          </div>
+        </div>
+        <div class="split-comparison reveal" id="split-comparison"></div>
+      </div>
+    </section>
+
+    <section class="section-block protocol-section" id="protocol">
+      <div class="section-container">
+        <header class="section-heading reveal">
+          <p class="eyebrow">08 · Experiment design</p>
+          <h2>变量被拆开，结论才有解释力。</h2>
+          <p>E1–E4 固定模型、量化、训练步数和 dev，仅改变 LoRA target 或负样本组成；RePOPE 不参与 checkpoint 选择。</p>
+        </header>
+        <div class="experiment-map reveal-group">
+          <article class="experiment-node reveal base"><span>E0</span><h3>Fresh base</h3><p>无 adapter；建立保守 operating point。</p></article>
+          <article class="experiment-node reveal"><span>E1</span><h3>Attention LoRA</h3><p>q/k/v/o；Recall 上升，FPR inflation。</p></article>
+          <article class="experiment-node reveal"><span>E2</span><h3>+ Merger</h3><p>视觉 Merger LoRA；结果几乎复制 E1。</p></article>
+          <article class="experiment-node reveal selected"><span>E3</span><h3>Hard negatives</h3><p>adversarial negatives 2,666→4,000；正式模型。</p></article>
+          <article class="experiment-node reveal"><span>E4</span><h3>+ MLP all-linear</h3><p>增加容量；改变 calibration，未改善 frontier。</p></article>
+        </div>
+        <div class="protocol-grid">
+          <article class="protocol-card glass-card reveal"><span class="data-number">16k</span><h3>训练问题</h3><p>8,000 yes + 8,000 no；10,000 张唯一训练图片。</p></article>
+          <article class="protocol-card glass-card reveal"><span class="data-number">0</span><h3>图片泄漏</h3><p>train、dev、RePOPE 按 image ID 隔离；500 张测试图加入黑名单。</p></article>
+          <article class="protocol-card glass-card reveal"><span class="data-number">4-bit</span><h3>NF4 QLoRA</h3><p>r=16、alpha=32、dropout=0.05，answer-only supervision。</p></article>
+          <article class="protocol-card glass-card reveal"><span class="data-number">2×</span><h3>训练 epochs</h3><p>2,000 optimizer steps；每 500 steps 保存并评测。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block engineering-section" id="engineering">
+      <div class="section-container engineering-layout">
+        <header class="section-heading inverse reveal">
+          <p class="eyebrow">09 · Engineering proof</p>
+          <h2>先证明流水线可信，再讨论模型提升。</h2>
+          <p>速度基准锁定 micro-batch 2 × accumulation 8；Smoke test 验证梯度、权重更新、显存稳定、保存和重载闭环。</p>
+        </header>
+        <div class="engineering-cards reveal-group">
+          <article class="dark-card reveal"><span class="data-number">2.07×</span><h3>吞吐提升</h3><p>B2 达到 2.884 samples/s，峰值显存 5.80 GiB。</p></article>
+          <article class="dark-card reveal"><span class="data-number">8/8</span><h3>Smoke steps</h3><p>所有 loss 有限、观察到非零梯度，没有显存增长趋势。</p></article>
+          <article class="dark-card reveal"><span class="data-number">100%</span><h3>Reload consistency</h3><p>adapter 保存与重载成功，固定样本贪心预测一致。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block limits-section" id="limits">
+      <div class="section-container limits-layout">
+        <header class="section-heading reveal">
+          <p class="eyebrow">10 · Boundaries</p>
+          <h2>可以确认什么，仍不能声称什么。</h2>
+        </header>
+        <div class="limits-list reveal">
+          <article><span>可以确认</span><p>hard-negative supervision 能缓解基础 QLoRA 引入的 FPR inflation。</p></article>
+          <article><span>可以确认</span><p>E3@512 是已评测配置中 Accuracy 与 F1 最高的综合点。</p></article>
+          <article class="no"><span>不能声称</span><p>任何 fine-tuned 模型的 hallucination 已低于 fresh base。</p></article>
+          <article class="no"><span>不能声称</span><p>单个 256→512 消融已经证明内部机制是“看得更清楚”。</p></article>
+        </div>
+        <p class="final-thesis reveal">小规模 VLM 的核心限制，更可能来自 hard-example supervision、视觉信息充分性和跨数据集 calibration，而不是 LoRA 参数仍然不够多。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="section-container footer-inner">
+      <div><strong>QLoRA / RePOPE Final Report</strong><p>Qwen2-VL-2B-Instruct · 2026-08-12</p></div>
+      <div><span>Canonical baseline</span><code>e0_fresh_base_repope_256vt</code></div>
+      <a href="README.md">阅读完整 README</a>
+    </div>
+  </footer>
+
+  <dialog class="case-dialog" id="case-dialog" aria-labelledby="dialog-title">
+    <button class="dialog-close" type="button" aria-label="关闭图片详情">×</button>
+    <div class="dialog-layout">
+      <div class="dialog-media"><img src="" alt=""></div>
+      <div class="dialog-copy">
+        <p class="dialog-kicker eyebrow"></p>
+        <h2 id="dialog-title"></h2>
+        <div class="dialog-truth"></div>
+        <div class="dialog-answers"></div>
+        <p class="dialog-diagnostic"></p>
+        <small class="dialog-source"></small>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="assets/report-data.js"></script>
+  <script src="assets/report.js"></script>
+</body>
+</html>

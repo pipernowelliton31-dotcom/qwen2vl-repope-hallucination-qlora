@@ -1,0 +1,80 @@
+{
+  "purpose": "Engineering-only benchmark; do not compare these values with E0 inference.",
+  "phase1_source": "existing qlora_speed_phase1.json (not rerun)",
+  "phase2_isolation": "one fresh Python/CUDA process per configuration",
+  "rows": 128,
+  "phase1_optimizer_steps_per_case": 5,
+  "phase1_warmup_steps": 1,
+  "phase2_optimizer_steps_per_case": 16,
+  "phase2_warmup_steps": 5,
+  "phase1": [
+    {
+      "name": "C-off",
+      "micro_batch": 1,
+      "gradient_accumulation": 16,
+      "effective_batch": 16,
+      "gradient_checkpointing": false,
+      "oom": false,
+      "measured_optimizer_steps": 4,
+      "mean_step_seconds": 12.750881875001141,
+      "p50_step_seconds": 12.64615749999939,
+      "samples_per_second": 1.2548151694016512,
+      "peak_memory_gb": 3.9757919311523438
+    },
+    {
+      "name": "C-on",
+      "micro_batch": 1,
+      "gradient_accumulation": 16,
+      "effective_batch": 16,
+      "gradient_checkpointing": true,
+      "oom": false,
+      "measured_optimizer_steps": 4,
+      "mean_step_seconds": 26.18350882500272,
+      "p50_step_seconds": 26.146312700002454,
+      "samples_per_second": 0.6110716522730348,
+      "peak_memory_gb": 3.3187994956970215
+    }
+  ],
+  "phase2": [
+    {
+      "name": "B1",
+      "micro_batch": 1,
+      "gradient_accumulation": 16,
+      "effective_batch": 16,
+      "gradient_checkpointing": false,
+      "oom": false,
+      "measured_optimizer_steps": 11,
+      "mean_step_seconds": 11.456936681818412,
+      "p50_step_seconds": 11.843080400001782,
+      "samples_per_second": 1.396533859298638,
+      "peak_memory_gb": 3.9757919311523438
+    },
+    {
+      "name": "B2",
+      "micro_batch": 2,
+      "gradient_accumulation": 8,
+      "effective_batch": 16,
+      "gradient_checkpointing": false,
+      "oom": false,
+      "measured_optimizer_steps": 11,
+      "mean_step_seconds": 5.54738196363707,
+      "p50_step_seconds": 5.594313699999475,
+      "samples_per_second": 2.8842434331869593,
+      "peak_memory_gb": 5.804447174072266
+    }
+  ],
+  "skipped_configs": [
+    {
+      "name": "B4",
+      "micro_batch": 4,
+      "gradient_accumulation": 4,
+      "reason": "Stopped and excluded because GPU memory pressure was too high."
+    }
+  ],
+  "locked_config": {
+    "per_device_train_batch_size": 2,
+    "gradient_accumulation_steps": 8,
+    "gradient_checkpointing": false,
+    "effective_batch": 16
+  }
+}

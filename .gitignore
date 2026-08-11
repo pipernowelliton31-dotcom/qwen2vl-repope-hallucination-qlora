@@ -1,0 +1,51 @@
+# Local datasets, checkpoints, predictions, and generated outputs
+/data/
+/models/
+/results/
+/output/
+/__pycache__/
+/.playwright-cli/
+**/__pycache__/
+**/.ipynb_checkpoints/
+*.py[cod]
+
+# Model/training artifacts
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.onnx
+*.gguf
+*.npz
+*.npy
+*predictions*.jsonl
+optimizer*
+scheduler*
+rng_state*
+trainer_state*
+
+# Local credentials and editor state
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.idea/
+.vscode/
+
+# Downloads, archives, and temporary files
+*.part
+*.tmp
+*.log
+*.zip
+
+# Keep only the final report; preserve stage reports locally without publishing
+/deliverables/*
+!/deliverables/qwen2vl-pope-final-report-2026-08-12/
+!/deliverables/qwen2vl-pope-final-report-2026-08-12/**
+
+# Browser QA captures are not research deliverables
+/deliverables/qwen2vl-pope-final-report-2026-08-12/*.png
+/deliverables/qwen2vl-pope-final-report-2026-08-12/**/__pycache__/
+/deliverables/qwen2vl-pope-final-report-2026-08-12/**/*.py[cod]

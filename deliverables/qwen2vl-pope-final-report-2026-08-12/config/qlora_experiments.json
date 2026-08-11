@@ -1,0 +1,45 @@
+{
+  "seed": 42,
+  "model_path": "Qwen/Qwen2-VL-2B-Instruct",
+  "max_visual_tokens": 256,
+  "quantization": {
+    "load_in_4bit": true,
+    "type": "nf4",
+    "double_quant": true
+  },
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "llm_lr": 0.0001,
+    "merger_lr": 0.0001
+  },
+  "training": {
+    "epochs": 2,
+    "warmup_ratio": 0.05,
+    "max_grad_norm": 1.0,
+    "save_steps": 500,
+    "logging_steps": 10
+  },
+  "data": {
+    "train_size": 16000,
+    "train_unique_images": 10000,
+    "dev_size": 3000,
+    "e1_counts": {
+      "positive": 8000,
+      "random": 2667,
+      "popular": 2667,
+      "adversarial": 2666
+    },
+    "e3_counts": {
+      "positive": 8000,
+      "random": 2000,
+      "popular": 2000,
+      "adversarial": 4000
+    },
+    "dev_per_split": {
+      "yes": 500,
+      "no": 500
+    }
+  }
+}

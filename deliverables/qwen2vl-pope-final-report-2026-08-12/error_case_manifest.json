@@ -1,0 +1,635 @@
+[
+  {
+    "id": "e0-01",
+    "focusModel": "E0",
+    "focusLabel": "Fresh base",
+    "split": "random",
+    "questionId": "17",
+    "imageSource": "COCO_val2014_000000429109",
+    "question": "Is there a car in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E1",
+      "E2"
+    ],
+    "diagnostic": "密集交通场景中的真实 car 漏检",
+    "image": "assets/error-cases/e0-01-random-fn-qid-17.jpg",
+    "sourcePrediction": "e0_fresh_base_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e0-02",
+    "focusModel": "E0",
+    "focusLabel": "Fresh base",
+    "split": "popular",
+    "questionId": "165",
+    "imageSource": "COCO_val2014_000000140583",
+    "question": "Is there a person in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "yes",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E1",
+      "E2",
+      "E3"
+    ],
+    "diagnostic": "远距离人物与羊群背景下的 person 漏检",
+    "image": "assets/error-cases/e0-02-popular-fn-qid-165.jpg",
+    "sourcePrediction": "e0_fresh_base_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e0-03",
+    "focusModel": "E0",
+    "focusLabel": "Fresh base",
+    "split": "adversarial",
+    "questionId": "84",
+    "imageSource": "COCO_val2014_000000569839",
+    "question": "Is there a handbag in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "yes",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E3",
+      "E4"
+    ],
+    "diagnostic": "儿童室内场景中的 handbag 误报",
+    "image": "assets/error-cases/e0-03-adversarial-fp-qid-84.jpg",
+    "sourcePrediction": "e0_fresh_base_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e0-04",
+    "focusModel": "E0",
+    "focusLabel": "Fresh base",
+    "split": "popular",
+    "questionId": "174",
+    "imageSource": "COCO_val2014_000000421455",
+    "question": "Is there a cup in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "yes",
+      "E1": "no",
+      "E2": "no",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E1",
+      "E2",
+      "E3",
+      "E4"
+    ],
+    "diagnostic": "反光车窗近景中的 cup 误报",
+    "image": "assets/error-cases/e0-04-popular-fp-qid-174.jpg",
+    "sourcePrediction": "e0_fresh_base_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e0-05",
+    "focusModel": "E0",
+    "focusLabel": "Fresh base",
+    "split": "adversarial",
+    "questionId": "537",
+    "imageSource": "COCO_val2014_000000498374",
+    "question": "Is there a person in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": true,
+    "answers": {
+      "E0": "no",
+      "E1": "no",
+      "E2": "no",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [],
+    "diagnostic": "镜中人物未被识别；五个模型共同失败",
+    "image": "assets/error-cases/e0-05-adversarial-fn-qid-537.jpg",
+    "sourcePrediction": "e0_fresh_base_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e1-01",
+    "focusModel": "E1",
+    "focusLabel": "Attention LoRA",
+    "split": "random",
+    "questionId": "50",
+    "imageSource": "COCO_val2014_000000544456",
+    "question": "Is there a cell phone in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E0",
+      "E3",
+      "E4"
+    ],
+    "diagnostic": "雪地救援场景中的 cell phone 误报",
+    "image": "assets/error-cases/e1-01-random-fp-qid-50.jpg",
+    "sourcePrediction": "e1_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e1-02",
+    "focusModel": "E1",
+    "focusLabel": "Attention LoRA",
+    "split": "popular",
+    "questionId": "78",
+    "imageSource": "COCO_val2014_000000239444",
+    "question": "Is there a bottle in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E0",
+      "E3",
+      "E4"
+    ],
+    "diagnostic": "厨房备餐场景中的 bottle 误报",
+    "image": "assets/error-cases/e1-02-popular-fp-qid-78.jpg",
+    "sourcePrediction": "e1_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e1-03",
+    "focusModel": "E1",
+    "focusLabel": "Attention LoRA",
+    "split": "adversarial",
+    "questionId": "1297",
+    "imageSource": "COCO_val2014_000000313034",
+    "question": "Is there a clock in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "no",
+      "E2": "yes",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E2"
+    ],
+    "diagnostic": "室内人物场景中的 clock 漏检",
+    "image": "assets/error-cases/e1-03-adversarial-fn-qid-1297.jpg",
+    "sourcePrediction": "e1_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e1-04",
+    "focusModel": "E1",
+    "focusLabel": "Attention LoRA",
+    "split": "popular",
+    "questionId": "413",
+    "imageSource": "COCO_val2014_000000239347",
+    "question": "Is there a tie in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "no",
+      "E2": "yes",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E2"
+    ],
+    "diagnostic": "婚礼照片中的 tie 漏检",
+    "image": "assets/error-cases/e1-04-popular-fn-qid-413.jpg",
+    "sourcePrediction": "e1_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e1-05",
+    "focusModel": "E1",
+    "focusLabel": "Attention LoRA",
+    "split": "adversarial",
+    "questionId": "200",
+    "imageSource": "COCO_val2014_000000042190",
+    "question": "Is there a skis in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": true,
+    "answers": {
+      "E0": "yes",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "yes",
+      "E4": "yes"
+    },
+    "correctModels": [],
+    "diagnostic": "风筝冲浪被误判为 skis；五个模型共同失败",
+    "image": "assets/error-cases/e1-05-adversarial-fp-qid-200.jpg",
+    "sourcePrediction": "e1_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e2-01",
+    "focusModel": "E2",
+    "focusLabel": "+ Visual Merger",
+    "split": "random",
+    "questionId": "130",
+    "imageSource": "COCO_val2014_000000075591",
+    "question": "Is there a clock in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "yes",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E3",
+      "E4"
+    ],
+    "diagnostic": "床铺与宠物场景中的 clock 误报",
+    "image": "assets/error-cases/e2-01-random-fp-qid-130.jpg",
+    "sourcePrediction": "e2_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e2-02",
+    "focusModel": "E2",
+    "focusLabel": "+ Visual Merger",
+    "split": "popular",
+    "questionId": "94",
+    "imageSource": "COCO_val2014_000000300368",
+    "question": "Is there a chair in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "yes",
+      "E4": "yes"
+    },
+    "correctModels": [
+      "E0"
+    ],
+    "diagnostic": "婚礼切蛋糕场景中的 chair 误报",
+    "image": "assets/error-cases/e2-02-popular-fp-qid-94.jpg",
+    "sourcePrediction": "e2_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e2-03",
+    "focusModel": "E2",
+    "focusLabel": "+ Visual Merger",
+    "split": "adversarial",
+    "questionId": "735",
+    "imageSource": "COCO_val2014_000000113701",
+    "question": "Is there a clock in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "no",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E1"
+    ],
+    "diagnostic": "床头小型 clock 漏检",
+    "image": "assets/error-cases/e2-03-adversarial-fn-qid-735.jpg",
+    "sourcePrediction": "e2_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e2-04",
+    "focusModel": "E2",
+    "focusLabel": "+ Visual Merger",
+    "split": "popular",
+    "questionId": "966",
+    "imageSource": "COCO_val2014_000000419453",
+    "question": "Is there a chair in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "no",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E1"
+    ],
+    "diagnostic": "运动场远景中的 chair 漏检",
+    "image": "assets/error-cases/e2-04-popular-fn-qid-966.jpg",
+    "sourcePrediction": "e2_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e2-05",
+    "focusModel": "E2",
+    "focusLabel": "+ Visual Merger",
+    "split": "adversarial",
+    "questionId": "192",
+    "imageSource": "COCO_val2014_000000063953",
+    "question": "Is there a bench in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": true,
+    "answers": {
+      "E0": "yes",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "yes",
+      "E4": "yes"
+    },
+    "correctModels": [],
+    "diagnostic": "滑板场景中的 bench 误报；五个模型共同失败",
+    "image": "assets/error-cases/e2-05-adversarial-fp-qid-192.jpg",
+    "sourcePrediction": "e2_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e3-01",
+    "focusModel": "E3",
+    "focusLabel": "+ Hard negatives",
+    "split": "random",
+    "questionId": "217",
+    "imageSource": "COCO_val2014_000000498759",
+    "question": "Is there a person in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E1",
+      "E2"
+    ],
+    "diagnostic": "低机位运动场景中的 person 漏检",
+    "image": "assets/error-cases/e3-01-random-fn-qid-217.jpg",
+    "sourcePrediction": "e3_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e3-02",
+    "focusModel": "E3",
+    "focusLabel": "+ Hard negatives",
+    "split": "popular",
+    "questionId": "289",
+    "imageSource": "COCO_val2014_000000012333",
+    "question": "Is there a chair in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "no",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E1"
+    ],
+    "diagnostic": "马术场景中的 chair 漏检",
+    "image": "assets/error-cases/e3-02-popular-fn-qid-289.jpg",
+    "sourcePrediction": "e3_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e3-03",
+    "focusModel": "E3",
+    "focusLabel": "+ Hard negatives",
+    "split": "adversarial",
+    "questionId": "88",
+    "imageSource": "COCO_val2014_000000219622",
+    "question": "Is there a truck in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "yes",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "yes",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E4"
+    ],
+    "diagnostic": "足球场景中的 truck 误报",
+    "image": "assets/error-cases/e3-03-adversarial-fp-qid-88.jpg",
+    "sourcePrediction": "e3_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e3-04",
+    "focusModel": "E3",
+    "focusLabel": "+ Hard negatives",
+    "split": "popular",
+    "questionId": "133",
+    "imageSource": "COCO_val2014_000000516916",
+    "question": "Is there a tv in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "yes",
+      "E4": "yes"
+    },
+    "correctModels": [
+      "E0"
+    ],
+    "diagnostic": "多显示器工作区被误判为 tv",
+    "image": "assets/error-cases/e3-04-popular-fp-qid-133.jpg",
+    "sourcePrediction": "e3_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e3-05",
+    "focusModel": "E3",
+    "focusLabel": "+ Hard negatives",
+    "split": "adversarial",
+    "questionId": "483",
+    "imageSource": "COCO_val2014_000000318204",
+    "question": "Is there a horse in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": true,
+    "answers": {
+      "E0": "no",
+      "E1": "no",
+      "E2": "no",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [],
+    "diagnostic": "远景海滩中的 horse 漏检；五个模型共同失败",
+    "image": "assets/error-cases/e3-05-adversarial-fn-qid-483.jpg",
+    "sourcePrediction": "e3_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e4-01",
+    "focusModel": "E4",
+    "focusLabel": "Attention + MLP",
+    "split": "random",
+    "questionId": "195",
+    "imageSource": "COCO_val2014_000000526321",
+    "question": "Is there a remote in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "yes",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "yes",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E0",
+      "E1",
+      "E2",
+      "E3"
+    ],
+    "diagnostic": "设备密集桌面中的 remote 漏检",
+    "image": "assets/error-cases/e4-01-random-fn-qid-195.jpg",
+    "sourcePrediction": "e4_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e4-02",
+    "focusModel": "E4",
+    "focusLabel": "Attention + MLP",
+    "split": "popular",
+    "questionId": "247",
+    "imageSource": "COCO_val2014_000000456178",
+    "question": "Is there a traffic light in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "yes",
+      "E4": "no"
+    },
+    "correctModels": [
+      "E1",
+      "E2",
+      "E3"
+    ],
+    "diagnostic": "街景中的 traffic light 漏检",
+    "image": "assets/error-cases/e4-02-popular-fn-qid-247.jpg",
+    "sourcePrediction": "e4_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e4-03",
+    "focusModel": "E4",
+    "focusLabel": "Attention + MLP",
+    "split": "adversarial",
+    "questionId": "228",
+    "imageSource": "COCO_val2014_000000360600",
+    "question": "Is there a spoon in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "yes",
+      "E4": "yes"
+    },
+    "correctModels": [
+      "E0"
+    ],
+    "diagnostic": "食物近景中的 spoon 误报",
+    "image": "assets/error-cases/e4-03-adversarial-fp-qid-228.jpg",
+    "sourcePrediction": "e4_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e4-04",
+    "focusModel": "E4",
+    "focusLabel": "Attention + MLP",
+    "split": "popular",
+    "questionId": "229",
+    "imageSource": "COCO_val2014_000000031773",
+    "question": "Is there a tv in the image?",
+    "truth": "no",
+    "errorType": "FP",
+    "sharedFailure": false,
+    "answers": {
+      "E0": "no",
+      "E1": "yes",
+      "E2": "yes",
+      "E3": "yes",
+      "E4": "yes"
+    },
+    "correctModels": [
+      "E0"
+    ],
+    "diagnostic": "笔记本工作区被误判为 tv",
+    "image": "assets/error-cases/e4-04-popular-fp-qid-229.jpg",
+    "sourcePrediction": "e4_checkpoint-1000_repope_256vt_predictions.jsonl"
+  },
+  {
+    "id": "e4-05",
+    "focusModel": "E4",
+    "focusLabel": "Attention + MLP",
+    "split": "adversarial",
+    "questionId": "627",
+    "imageSource": "COCO_val2014_000000094944",
+    "question": "Is there a backpack in the image?",
+    "truth": "yes",
+    "errorType": "FN",
+    "sharedFailure": true,
+    "answers": {
+      "E0": "no",
+      "E1": "no",
+      "E2": "no",
+      "E3": "no",
+      "E4": "no"
+    },
+    "correctModels": [],
+    "diagnostic": "雪地人物身上的 backpack 漏检；五个模型共同失败",
+    "image": "assets/error-cases/e4-05-adversarial-fn-qid-627.jpg",
+    "sourcePrediction": "e4_checkpoint-1000_repope_256vt_predictions.jsonl"
+  }
+]

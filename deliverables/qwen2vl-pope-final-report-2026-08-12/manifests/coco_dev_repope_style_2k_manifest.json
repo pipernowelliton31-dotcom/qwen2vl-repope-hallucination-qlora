@@ -1,0 +1,17 @@
+{
+  "source": "data/processed/coco_dev_repope_style.jsonl",
+  "output": "data/processed/coco_dev_repope_style_2k.jsonl",
+  "seed": 42,
+  "sample_count": 2000,
+  "unique_image_count": 1494,
+  "counts": {
+    "adversarial:no": 333,
+    "adversarial:yes": 333,
+    "popular:no": 333,
+    "popular:yes": 333,
+    "random:no": 334,
+    "random:yes": 334
+  },
+  "source_sha256": "7c6c9d4d52310e3318ba0797d51193d19a542a15b1ea248553e5b7a617f7d15e",
+  "output_sha256": "94c8c98a9a16efc691eb28239aa8c7e1fc545f92b9922211749c5a3ea1483b92"
+}

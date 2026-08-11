@@ -1,0 +1,70 @@
+{
+  "status": "selected",
+  "baseline": {
+    "path": "results/qlora_evaluations/e0_base_2k_dev_256vt_metrics.json",
+    "precision": 0.9770742358078602,
+    "recall": 0.895,
+    "f1": 0.9342379958246346,
+    "yes_ratio": 0.458,
+    "true_yes_ratio": 0.5,
+    "adversarial_fpr": 0.036036036036036036
+  },
+  "candidates": [
+    {
+      "path": "results/qlora_evaluations/e3_checkpoint-500_dev_256vt_metrics.json",
+      "precision": 0.9493041749502982,
+      "recall": 0.955,
+      "f1": 0.9521435692921236,
+      "yes_ratio": 0.503,
+      "true_yes_ratio": 0.5,
+      "adversarial_fpr": 0.09009009009009009
+    },
+    {
+      "path": "results/qlora_evaluations/e3_checkpoint-1000_dev_256vt_metrics.json",
+      "precision": 0.9810326659641728,
+      "recall": 0.931,
+      "f1": 0.9553617239610057,
+      "yes_ratio": 0.4745,
+      "true_yes_ratio": 0.5,
+      "adversarial_fpr": 0.03903903903903904
+    },
+    {
+      "path": "results/qlora_evaluations/e3_checkpoint-1500_dev_256vt_metrics.json",
+      "precision": 0.9504459861248761,
+      "recall": 0.959,
+      "f1": 0.9547038327526132,
+      "yes_ratio": 0.5045,
+      "true_yes_ratio": 0.5,
+      "adversarial_fpr": 0.08708708708708708
+    },
+    {
+      "path": "results/qlora_evaluations/e3_checkpoint-2000_dev_256vt_metrics.json",
+      "precision": 0.963673057517659,
+      "recall": 0.955,
+      "f1": 0.9593169261677549,
+      "yes_ratio": 0.4955,
+      "true_yes_ratio": 0.5,
+      "adversarial_fpr": 0.06906906906906907
+    }
+  ],
+  "eligible": [
+    {
+      "path": "results/qlora_evaluations/e3_checkpoint-1000_dev_256vt_metrics.json",
+      "precision": 0.9810326659641728,
+      "recall": 0.931,
+      "f1": 0.9553617239610057,
+      "yes_ratio": 0.4745,
+      "true_yes_ratio": 0.5,
+      "adversarial_fpr": 0.03903903903903904
+    }
+  ],
+  "selected": {
+    "path": "results/qlora_evaluations/e3_checkpoint-1000_dev_256vt_metrics.json",
+    "precision": 0.9810326659641728,
+    "recall": 0.931,
+    "f1": 0.9553617239610057,
+    "yes_ratio": 0.4745,
+    "true_yes_ratio": 0.5,
+    "adversarial_fpr": 0.03903903903903904
+  }
+}

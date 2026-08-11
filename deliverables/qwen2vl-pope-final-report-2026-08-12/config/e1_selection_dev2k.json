@@ -1,0 +1,51 @@
+{
+  "status": "no_eligible_checkpoint",
+  "baseline": {
+    "path": "results/qlora_evaluations/e0_base_2k_dev_256vt_metrics.json",
+    "precision": 0.9770742358078602,
+    "recall": 0.895,
+    "f1": 0.9342379958246346,
+    "yes_ratio": 0.458,
+    "true_yes_ratio": 0.5,
+    "adversarial_fpr": 0.036036036036036036
+  },
+  "candidates": [
+    {
+      "path": "results/qlora_evaluations/e1_checkpoint-500_dev_256vt_metrics.json",
+      "precision": 0.9493545183714002,
+      "recall": 0.956,
+      "f1": 0.9526656701544594,
+      "yes_ratio": 0.5035,
+      "true_yes_ratio": 0.5,
+      "adversarial_fpr": 0.09009009009009009
+    },
+    {
+      "path": "results/qlora_evaluations/e1_checkpoint-1000_dev_256vt_metrics.json",
+      "precision": 0.9654471544715447,
+      "recall": 0.95,
+      "f1": 0.9576612903225805,
+      "yes_ratio": 0.492,
+      "true_yes_ratio": 0.5,
+      "adversarial_fpr": 0.06606606606606606
+    },
+    {
+      "path": "results/qlora_evaluations/e1_checkpoint-1500_dev_256vt_metrics.json",
+      "precision": 0.9459724950884086,
+      "recall": 0.963,
+      "f1": 0.954410307234886,
+      "yes_ratio": 0.509,
+      "true_yes_ratio": 0.5,
+      "adversarial_fpr": 0.09309309309309309
+    },
+    {
+      "path": "results/qlora_evaluations/e1_checkpoint-2000_dev_256vt_metrics.json",
+      "precision": 0.9587109768378651,
+      "recall": 0.952,
+      "f1": 0.9553437029603612,
+      "yes_ratio": 0.4965,
+      "true_yes_ratio": 0.5,
+      "adversarial_fpr": 0.07807807807807808
+    }
+  ],
+  "selected": null
+}

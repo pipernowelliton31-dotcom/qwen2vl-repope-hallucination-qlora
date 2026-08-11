@@ -1,0 +1,36 @@
+{
+  "seed": 42,
+  "source": "COCO train2017",
+  "blocked_repope_image_count": 500,
+  "train_image_count": 10000,
+  "dev_image_count": 1940,
+  "e1_e3_same_image_sequence": true,
+  "e1_e3_same_positive_rows": true,
+  "hashes": {
+    "e1": "ebb460e8ba5b8121c8e2e150c00d906f3d14f4bb08e4d314125a40564141023e",
+    "e3": "4cac4651b8fada7bae833e81747dfad7bee85a1f41e7898001f41b6aac82e50d",
+    "dev": "7c6c9d4d52310e3318ba0797d51193d19a542a15b1ea248553e5b7a617f7d15e"
+  },
+  "counts": {
+    "e1": {
+      "popular": 2667,
+      "positive": 8000,
+      "adversarial": 2666,
+      "random": 2667
+    },
+    "e3": {
+      "popular": 2000,
+      "positive": 8000,
+      "adversarial": 4000,
+      "random": 2000
+    },
+    "dev": {
+      "random:no": 500,
+      "random:yes": 500,
+      "popular:yes": 500,
+      "popular:no": 500,
+      "adversarial:no": 500,
+      "adversarial:yes": 500
+    }
+  }
+}
