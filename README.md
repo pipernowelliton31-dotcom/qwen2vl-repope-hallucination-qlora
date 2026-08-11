@@ -1,4 +1,4 @@
-# 用 QLoRA 缓解 Qwen2-VL 视觉幻觉：RePOPE 实验
+# QLoRA fine-tuning of Qwen2-VL for object-existence hallucination mitigation, with Recall–FPR analysis on POPE/RePOPE.
 
 本项目研究 Qwen2-VL-2B-Instruct 在物体存在性问答中的漏检与误报，并通过四组受控 QLoRA 实验比较 LoRA 注入范围、难负样本配比和视觉 token 预算对 Recall–FPR trade-off 的影响。
 
