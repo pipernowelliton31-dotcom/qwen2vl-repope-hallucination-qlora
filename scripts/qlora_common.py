@@ -19,7 +19,7 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
-from evaluate_pope import normalize_answer  # Same parser as the established baseline.
+from scripts.evaluate_pope import normalize_answer  # Same parser as the established baseline.
 
 CONFIG_PATH = PROJECT_DIR / "configs" / "qlora_experiments.json"
 RESULTS_DIR = PROJECT_DIR / "results"
@@ -102,10 +102,14 @@ def experiment_target_regex(experiment: str, include_merger: bool = False) -> st
     raise ValueError(f"Unknown experiment: {experiment}")
 
 
-def load_quantized_model(experiment: str, gradient_checkpointing: bool, max_visual_tokens: int = 256, attach_lora: bool = True, include_merger: bool = False):
-    """Load Qwen2-VL, prepare frozen 4-bit weights, then attach only approved LoRA adapters."""
+def load_quantized_base_model(max_visual_tokens: int = 256):
+    """Load the raw quantized base model without PEFT's k-bit training preparation.
+
+    This is the protocol used by the original POPE baseline entrypoint. Formal
+    E0-vs-adapter comparisons use ``load_pipeline_matched_quantized_model`` so
+    the base and adapter share the exact same preparation path.
+    """
     import torch
-    from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
     from transformers import AutoProcessor, BitsAndBytesConfig, Qwen2VLForConditionalGeneration
 
     cfg = config()
@@ -116,6 +120,13 @@ def load_quantized_model(experiment: str, gradient_checkpointing: bool, max_visu
         cfg["model_path"], local_files_only=True, quantization_config=quant, torch_dtype=dtype,
         device_map="auto", attn_implementation="sdpa",
     )
+    return model, processor, dtype
+
+
+def prepare_model_for_qlora_training(model: Any, gradient_checkpointing: bool):
+    """Apply PEFT's k-bit preparation explicitly and deterministically."""
+    from peft import prepare_model_for_kbit_training
+
     model.config.use_cache = False
     # Transformers 5 stores the decoder cache flag inside text_config for
     # multimodal models; setting only the top-level attribute is insufficient.
@@ -124,8 +135,28 @@ def load_quantized_model(experiment: str, gradient_checkpointing: bool, max_visu
     model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=gradient_checkpointing)
     if gradient_checkpointing:
         model.gradient_checkpointing_enable()
+    return model
+
+
+def load_pipeline_matched_quantized_model(
+    experiment: str,
+    gradient_checkpointing: bool,
+    max_visual_tokens: int = 256,
+    attach_lora: bool = True,
+    include_merger: bool = False,
+):
+    """Load the frozen 4-bit model through the shared QLoRA evaluation path.
+
+    With ``attach_lora=False`` this reproduces the published fresh E0 protocol:
+    quantized load plus PEFT k-bit preparation, but no adapter attachment.
+    """
+    from peft import LoraConfig, get_peft_model
+
+    model, processor, dtype = load_quantized_base_model(max_visual_tokens)
+    model = prepare_model_for_qlora_training(model, gradient_checkpointing)
     if not attach_lora:
         return model, processor, dtype
+    cfg = config()
     lora_cfg = LoraConfig(
         r=cfg["lora"]["r"], lora_alpha=cfg["lora"]["alpha"], lora_dropout=cfg["lora"]["dropout"],
         bias="none", task_type="CAUSAL_LM", target_modules=experiment_target_regex(experiment, include_merger),
@@ -133,6 +164,23 @@ def load_quantized_model(experiment: str, gradient_checkpointing: bool, max_visu
     model = get_peft_model(model, lora_cfg)
     audit_trainable_parameters(model, experiment, include_merger)
     return model, processor, dtype
+
+
+def load_quantized_model(
+    experiment: str,
+    gradient_checkpointing: bool,
+    max_visual_tokens: int = 256,
+    attach_lora: bool = True,
+    include_merger: bool = False,
+):
+    """Backward-compatible alias for the pipeline-matched QLoRA loader."""
+    return load_pipeline_matched_quantized_model(
+        experiment,
+        gradient_checkpointing,
+        max_visual_tokens,
+        attach_lora,
+        include_merger,
+    )
 
 
 def audit_trainable_parameters(model: Any, experiment: str, include_merger: bool = False) -> list[str]:

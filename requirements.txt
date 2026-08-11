@@ -1,3 +1,5 @@
+# Install the CUDA-specific PyTorch build for your platform first.
+# The experiment used torch 2.13.0+cu132; this pin records the Python API version.
 torch==2.13.0
 transformers==5.13.1
 peft==0.20.0

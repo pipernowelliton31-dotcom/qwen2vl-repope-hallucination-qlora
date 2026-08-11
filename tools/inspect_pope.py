@@ -4,7 +4,7 @@ from pathlib import Path
 from datasets import load_dataset
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = Path(__file__).resolve().parents[1]
 CACHE_DIR = os.environ.get("HF_DATASETS_CACHE", str(Path.home() / ".cache" / "huggingface" / "datasets"))
 SAMPLE_DIR = PROJECT_DIR / "data" / "samples"
 

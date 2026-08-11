@@ -166,7 +166,7 @@
         <header class="section-heading reveal">
           <p class="eyebrow">04 · Checkpoint dynamics</p>
           <h2>训练更久，并没有带来单调改善。</h2>
-          <p>四组实验都在 500、1000、1500、2000 steps 上评测。checkpoint-1000 往往更保守，后期模型重新走向高 Recall / 高 FPR。</p>
+          <p>四组实验都在同一固定 2k dev 的 500、1000、1500、2000 steps 上评测。硬约束同时限制 overall FPR、adversarial FPR 与 Precision；checkpoint-1000 往往更保守，后期模型重新走向高 Recall / 高 FPR。</p>
         </header>
         <div class="dev-small-multiples reveal" id="dev-charts"></div>
         <div class="table-shell reveal">

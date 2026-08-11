@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PREDICTIONS = ROOT / "results" / "qwen2vl2b_baseline_predictions.jsonl"
 DEFAULT_ANNOTATIONS = ROOT / "data" / "raw" / "repope"
 DEFAULT_OUTPUT = ROOT / "results" / "qwen2vl2b_baseline_repope_metrics.json"

@@ -13,8 +13,15 @@ from typing import Any
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_DIR))
-from scripts.qlora_common import DATA_DIR, RESULTS_DIR, grouped_metrics, normalize_question, read_jsonl
-from evaluate_repope import image_stem
+from scripts.evaluate_repope import image_stem
+from scripts.qlora_common import (
+    DATA_DIR,
+    RESULTS_DIR,
+    grouped_metrics,
+    normalize_answer,
+    normalize_question,
+    read_jsonl,
+)
 
 REPOPE_DIR = PROJECT_DIR / "data" / "raw" / "repope"
 CACHE_DIR = Path(os.environ.get("HF_DATASETS_CACHE", Path.home() / ".cache" / "huggingface" / "datasets"))
@@ -55,10 +62,14 @@ def main() -> None:
     from PIL import Image
     from peft import PeftModel
     from tqdm.auto import tqdm
-    from scripts.qlora_common import load_quantized_model
+    from scripts.qlora_common import load_pipeline_matched_quantized_model
 
-    # Load no fresh adapter: PeftModel reads target-module details from the saved adapter config.
-    model, processor, _ = load_quantized_model("e1", False, args.max_visual_tokens, attach_lora=False)
+    # The formal fresh E0 deliberately shares PEFT k-bit preparation with
+    # adapter evaluation. PeftModel reads target-module details from the saved
+    # adapter config; no fresh adapter is created here.
+    model, processor, _ = load_pipeline_matched_quantized_model(
+        "e1", False, args.max_visual_tokens, attach_lora=False
+    )
     if args.adapter:
         model = PeftModel.from_pretrained(model, args.adapter)
     model.eval(); device = model.get_input_embeddings().weight.device
@@ -78,7 +89,7 @@ def main() -> None:
         with torch.inference_mode():
             ids = model.generate(**inputs, max_new_tokens=4, do_sample=False, use_cache=True, pad_token_id=processor.tokenizer.pad_token_id, eos_token_id=processor.tokenizer.eos_token_id)
         raw = processor.batch_decode(ids[:, inputs["input_ids"].shape[1]:], skip_special_tokens=True)[0]
-        prediction = __import__("evaluate_pope").normalize_answer(raw)
+        prediction = normalize_answer(raw)
         correct += prediction == str(row["label"]).lower()
         output_rows.append({**{key: value for key, value in row.items() if key not in {"image"}}, "prediction": prediction, "raw_answer": raw, "elapsed_seconds": time.perf_counter() - started})
         limits[split] += 1
@@ -96,6 +107,7 @@ def main() -> None:
         "dataset_path": str(dataset_path) if dataset_path else None,
         "dataset_sha256": hashlib.sha256(dataset_path.read_bytes()).hexdigest() if dataset_path else None,
         "adapter": str(args.adapter) if args.adapter else None,
+        "base_loading_protocol": "pipeline_matched_peft_kbit_preparation",
         "max_visual_tokens": args.max_visual_tokens,
         "metrics": metrics,
     }

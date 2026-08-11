@@ -6,14 +6,17 @@ import argparse
 import csv
 import io
 import json
+import sys
 import zipfile
 from collections import Counter
 from pathlib import Path
 
 from datasets import DownloadConfig, load_dataset
 
-from visualize_pope_errors import DATASET_CONFIG, DATASET_ID, DEFAULT_CACHE_DIR, RESULTS_DIR, load_jsonl
-from visualize_repope_errors import DEFAULT_ANNOTATIONS, DEFAULT_PREDICTIONS, relabel_records
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_DIR))
+from tools.visualize_pope_errors import DATASET_CONFIG, DATASET_ID, DEFAULT_CACHE_DIR, RESULTS_DIR, load_jsonl
+from tools.visualize_repope_errors import DEFAULT_ANNOTATIONS, DEFAULT_PREDICTIONS, relabel_records
 
 
 DEFAULT_OUTPUT = RESULTS_DIR / "qwen2vl2b_baseline_repope_all_errors.zip"

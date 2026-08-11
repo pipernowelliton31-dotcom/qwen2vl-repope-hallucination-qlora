@@ -6,7 +6,7 @@ same positive questions, so the reported change is a paired recall difference.
 It is not a complete RePOPE evaluation and must not be used to report F1.
 
 Example (NOT run automatically):
-    python test_repope_positive_512.py
+    python tools/analyze_repope_positive_512.py
 """
 
 from __future__ import annotations
@@ -15,6 +15,7 @@ import argparse
 import json
 import os
 import random
+import sys
 import time
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -25,11 +26,12 @@ from datasets import DownloadConfig, load_dataset
 from tqdm import tqdm
 from transformers import AutoProcessor, BitsAndBytesConfig, Qwen2VLForConditionalGeneration
 
-from evaluate_pope import MODEL_PATH, normalize_answer, run_single_inference
-from evaluate_repope import image_stem, read_jsonl, sha256
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_DIR))
+from scripts.evaluate_pope import MODEL_PATH, normalize_answer, run_single_inference
+from scripts.evaluate_repope import image_stem, read_jsonl, sha256
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
 RESULTS_DIR = PROJECT_DIR / "results"
 ANNOTATIONS_DIR = PROJECT_DIR / "data" / "raw" / "repope"
 BASELINE_PREDICTIONS = RESULTS_DIR / "qwen2vl2b_baseline_predictions.jsonl"

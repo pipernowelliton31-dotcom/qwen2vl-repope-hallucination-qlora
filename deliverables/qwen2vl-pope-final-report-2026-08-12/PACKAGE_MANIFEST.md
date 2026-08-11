@@ -32,6 +32,8 @@ TP / FP / TN / FN = 3062 / 187 / 4459 / 477
 
 旧的重评分 baseline 未复制到本交付包，也不进入网页数据。
 
+正式 fresh E0 与 adapter 评测共享 quantized load + PEFT k-bit preparation，只是不挂载 adapter。原始 POPE raw-base 入口属于不同协议，不得混入 E0–E4 主比较。
+
 ## 错误案例约束
 
 - E0–E4 各 5 张，共 25 张；

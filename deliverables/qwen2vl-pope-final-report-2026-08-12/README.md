@@ -38,6 +38,10 @@ results/qlora_evaluations/e0_fresh_base_repope_256vt_metrics.json
 
 旧阶段报告使用的 `qwen2vl2b_baseline_repope_metrics.json` 是对已保存 POPE predictions 的重新对齐计分，不是当前 RePOPE 文本上的 fresh inference。该口径已被替换，不参与本报告任何主图、排名、案例或增量计算。
 
+### Baseline protocol note
+
+最终比较采用 pipeline-matched fresh E0：它与 E1–E4 adapter 评测共享 raw 4-bit quantized load 和 PEFT k-bit preparation，只是不挂载 adapter。仓库中的原始 POPE baseline 入口只加载 raw quantized base，因此用途不同；历史审计曾观察到两条加载路径会造成少量预测翻转。为避免协议漂移，所有主图、排名、案例和增量均锁定前一种 fresh E0，且不把原始 POPE 路径或旧 predictions 重评分口径混入。
+
 ## 3. RePOPE 完整结果
 
 下表除 E3@512 外均使用 256 visual tokens。E3/E4-2000 是在正式 checkpoint 之外补充的 high-recall exploratory points。
@@ -67,7 +71,7 @@ E3@512 是当前最有吸引力的综合点，但其 FPR 仍高于 fresh base，
 
 ## 4. 固定 2k dev 的全部 checkpoint
 
-所有 checkpoint 使用相同的 2,000 条分层 dev、相同顺序、256 visual tokens。dev SHA256：
+Dev 来源池为 3,000 条；所有 checkpoint 使用其中相同的 2,000 条分层子集、相同顺序、256 visual tokens。固定配额为 random yes/no 各 334，popular 与 adversarial yes/no 各 333。dev SHA256：
 
 ```text
 94c8c98a9a16efc691eb28239aa8c7e1fc545f92b9922211749c5a3ea1483b92
@@ -93,7 +97,7 @@ E3@512 是当前最有吸引力的综合点，但其 FPR 仍高于 fresh base，
 | E4 All-linear | 1500 | 95.60 | 95.33 | 95.90 | **95.61** | 4.70 | 8.11 | 50.30 |
 | E4 All-linear | 2000 | 95.60 | 96.15 | 95.00 | 95.57 | 3.80 | 6.61 | 49.40 |
 
-E1/E2 的 checkpoint-1000 是人工平衡点，但未满足原始硬约束；E3-1000 与 E4-1000 是规则内 eligible points。最终选择 E3-1000，是因为它在保持较多 Recall 增益的同时，比 E1 明显减少 FP。
+硬约束相对 E0 dev baseline 为：overall FPR `≤ +1 pp`、adversarial FPR `≤ +1 pp`、Precision `≥ −1 pp`。通过约束后以 Recall 为主指标；Recall 差距不足 0.2 pp 时依次比较 F1、overall FPR、adversarial FPR、calibration gap 和路径。E1/E2 的 checkpoint-1000 是人工平衡点但不满足硬约束；E3-1000 与 E4-1000 是规则内 eligible points。最终选择 E3-1000，是因为它在保留更多 Recall 增益的同时，比 E1 明显减少 FP。
 
 ## 5. E0–E4 错误地图
 

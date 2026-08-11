@@ -11,17 +11,19 @@ import argparse
 import html
 import json
 import shutil
+import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
 from datasets import DownloadConfig, load_dataset
 
-from visualize_pope_errors import DATASET_CONFIG, DATASET_ID, DEFAULT_CACHE_DIR, RESULTS_DIR, load_jsonl
-from visualize_repope_errors import DEFAULT_ANNOTATIONS, DEFAULT_PREDICTIONS, relabel_records
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_DIR))
+from tools.visualize_pope_errors import DATASET_CONFIG, DATASET_ID, DEFAULT_CACHE_DIR, RESULTS_DIR, load_jsonl
+from tools.visualize_repope_errors import DEFAULT_ANNOTATIONS, DEFAULT_PREDICTIONS, relabel_records
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
 DEFAULT_512_PREDICTIONS = RESULTS_DIR / "qwen2vl2b_repope_random_positive_512_predictions.jsonl"
 SPLIT_ORDER = ("random", "popular", "adversarial")
 

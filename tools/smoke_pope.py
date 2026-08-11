@@ -12,7 +12,7 @@ from transformers import (
 from qwen_vl_utils import process_vision_info
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = Path(__file__).resolve().parents[1]
 MODEL_PATH = os.environ.get("QWEN2VL_MODEL_PATH", "Qwen/Qwen2-VL-2B-Instruct")
 IMAGE_PATH = Path(os.environ.get("QWEN2VL_TEST_IMAGE", PROJECT_DIR / "data" / "samples" / "test.jpg"))
 

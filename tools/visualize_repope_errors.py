@@ -10,12 +10,15 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import sys
 from pathlib import Path
 from typing import Any
 
 from datasets import DownloadConfig, load_dataset
 
-from visualize_pope_errors import (
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_DIR))
+from tools.visualize_pope_errors import (
     DATASET_CONFIG,
     DATASET_ID,
     DEFAULT_CACHE_DIR,
@@ -27,7 +30,6 @@ from visualize_pope_errors import (
 )
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
 DEFAULT_PREDICTIONS = RESULTS_DIR / "qwen2vl2b_baseline_predictions.jsonl"
 DEFAULT_METRICS = RESULTS_DIR / "qwen2vl2b_baseline_repope_metrics.json"
 DEFAULT_ANNOTATIONS = PROJECT_DIR / "data" / "raw" / "repope"

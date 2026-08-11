@@ -38,6 +38,15 @@ GitHub 不直接执行仓库中的本地 HTML。建议从 Releases 下载最终 
 
 旧的“复用 POPE predictions 重算”baseline 已废弃，不进入最终主数据。
 
+### Baseline protocol note
+
+仓库保留两条用途不同的基础模型路径，不能混用：
+
+- `scripts/evaluate_pope.py` 是原始 POPE baseline：只加载 raw 4-bit quantized base，不经过 PEFT 的 k-bit training preparation。
+- `scripts/evaluate_qlora.py` 是正式 dev/RePOPE 比较入口：fresh E0 与所有 adapters 都经过相同的 quantized load + PEFT k-bit preparation；E0 仅不挂载 adapter。上表的 fresh baseline 来自这条 pipeline-matched 路径。
+
+这一区分不会改写已冻结结果；它使 baseline 身份和复现入口显式化。所有 E0–E4 主比较必须使用第二条路径，不能把第一条路径或旧的 predictions 重评分结果代入增量计算。
+
 ## RePOPE 结果
 
 除 E3@512 外均为 256 visual tokens。E3/E4-2000 是探索性 high-recall points。
@@ -69,6 +78,7 @@ E3@512 相对 fresh base：Accuracy **+1.5027 pp**、Recall **+5.0014 pp**、F1 
 ## 实验设计
 
 - 训练来源：COCO train2017，10,000 张图片、16,000 个 yes/no 问题。
+- Dev 来源池为 3,000 条；正式 checkpoint selection 固定使用其中 2,000 条分层子集：random yes/no 各 334，popular 与 adversarial yes/no 各 333。
 - 防泄漏：训练、dev 与 RePOPE 按 image ID 隔离，零图片交集。
 - 量化：4-bit NF4、double quantization、BF16 compute。
 - LoRA：`r=16`、`alpha=32`、`dropout=0.05`、学习率 `1e-4`。
@@ -79,17 +89,18 @@ E3@512 相对 fresh base：Accuracy **+1.5027 pp**、Recall **+5.0014 pp**、F1 
 - E3：E1 架构 + 更多 adversarial negatives。
 - E4：E3 数据 + attention/MLP all-linear LoRA。
 
+Checkpoint 硬约束相对 E0 dev baseline 固定为：overall FPR 不高于 `+1 pp`、adversarial FPR 不高于 `+1 pp`、Precision 不低于 `−1 pp`；通过约束后优先 Recall，差距不足 0.2 pp 时按 F1、FPR、calibration gap 和路径作确定性 tie-break。
+
 ## 仓库结构
 
 ```text
 configs/                    可复现实验配置
 scripts/                    数据、训练、评测与 checkpoint 选择
+tools/                      检查、smoke test、可视化与导出工具
 notebooks/                  无运行输出的实验流水线
 deliverables/
   qwen2vl-pope-final-report-2026-08-12/
                              最终网页、指标、案例和研究 README
-evaluate_pope.py             原始 POPE baseline
-evaluate_repope.py           RePOPE 对齐与指标计算
 requirements.txt             核心 Python 依赖
 THIRD_PARTY_NOTICES.md       模型、数据与基准来源
 ```
@@ -99,6 +110,8 @@ THIRD_PARTY_NOTICES.md       模型、数据与基准来源
 ## 环境与路径
 
 实验环境：Windows、Python 3.12、CUDA 13.2、PyTorch 2.13.0+cu132、Transformers 5.13.1、PEFT 0.20.0、bitsandbytes 0.50.0。
+
+`requirements.txt` 中的 `torch==2.13.0` 锁定 Python API 版本；本实验实际使用的 CUDA wheel 是 `2.13.0+cu132`。请先按本机 CUDA/驱动从对应 PyTorch wheel channel 安装匹配构建，再安装其余依赖。
 
 ```powershell
 python -m venv .venv
@@ -118,6 +131,9 @@ $env:HF_DATASETS_CACHE = "D:\huggingface\datasets"
 python scripts/prepare_coco_repope_style.py --download --download-workers 24
 python scripts/prepare_dev_2k.py
 
+# 原始 POPE baseline；formal E0/E1–E4 比较请使用 evaluate_qlora.py
+python scripts/evaluate_pope.py --run-name qwen2vl2b_baseline
+
 # 工程测速与训练
 python scripts/benchmark_qlora_speed.py --phase 1
 python scripts/benchmark_qlora_speed.py --phase 2
@@ -129,6 +145,16 @@ python scripts/evaluate_checkpoints.py `
   --run-name e3 `
   --dataset dev `
   --start
+
+# 按预注册的 overall/adversarial FPR 与 Precision 硬约束选择 checkpoint
+python scripts/select_checkpoint.py `
+  --baseline results/qlora_evaluations/e0_base_2k_dev_256vt_metrics.json `
+  --candidates `
+    results/qlora_evaluations/e3_checkpoint-500_dev_256vt_metrics.json `
+    results/qlora_evaluations/e3_checkpoint-1000_dev_256vt_metrics.json `
+    results/qlora_evaluations/e3_checkpoint-1500_dev_256vt_metrics.json `
+    results/qlora_evaluations/e3_checkpoint-2000_dev_256vt_metrics.json `
+  --output results/qlora_runs/e3/selection_dev2k.json
 
 # 最终报告包完整性验证；公开仓库克隆后即可运行
 python deliverables/qwen2vl-pope-final-report-2026-08-12/scripts/validate_report.py

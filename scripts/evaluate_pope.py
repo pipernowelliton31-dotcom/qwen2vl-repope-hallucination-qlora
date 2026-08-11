@@ -19,7 +19,7 @@ from transformers import (
 )
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = Path(__file__).resolve().parents[1]
 MODEL_PATH = os.environ.get("QWEN2VL_MODEL_PATH", "Qwen/Qwen2-VL-2B-Instruct")
 DATASET_ID = "lmms-lab/POPE"
 DATASET_CONFIG = "Full"

@@ -24,7 +24,8 @@
   "data": {
     "train_size": 16000,
     "train_unique_images": 10000,
-    "dev_size": 3000,
+    "dev_source_size": 3000,
+    "dev_selection_size": 2000,
     "e1_counts": {
       "positive": 8000,
       "random": 2667,
@@ -37,9 +38,19 @@
       "popular": 2000,
       "adversarial": 4000
     },
-    "dev_per_split": {
-      "yes": 500,
-      "no": 500
+    "dev_selection_quotas": {
+      "random": {
+        "yes": 334,
+        "no": 334
+      },
+      "popular": {
+        "yes": 333,
+        "no": 333
+      },
+      "adversarial": {
+        "yes": 333,
+        "no": 333
+      }
     }
   }
 }

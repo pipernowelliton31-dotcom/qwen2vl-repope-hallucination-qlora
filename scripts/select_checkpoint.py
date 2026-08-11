@@ -8,6 +8,11 @@ from pathlib import Path
 from typing import Any
 
 
+FPR_TOLERANCE = 0.01
+PRECISION_TOLERANCE = 0.01
+RECALL_TIE_WINDOW = 0.002
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline", type=Path, required=True, help="Frozen E0 dev metrics JSON.")
@@ -17,18 +22,58 @@ def parse_args() -> argparse.Namespace:
 
 
 def summary(path: Path) -> dict[str, Any]:
-    source = json.loads(path.read_text(encoding="utf-8")); metrics = source["metrics"]
-    return {"path": str(path), "precision": metrics["overall"]["precision"], "recall": metrics["overall"]["recall"], "f1": metrics["overall"]["f1"], "yes_ratio": metrics["overall"]["yes_ratio"], "true_yes_ratio": (metrics["overall"]["tp"] + metrics["overall"]["fn"]) / metrics["overall"]["total"], "adversarial_fpr": metrics["adversarial"]["false_positive_rate"]}
+    source = json.loads(path.read_text(encoding="utf-8"))
+    metrics = source["metrics"]
+    overall = metrics["overall"]
+    return {
+        "path": str(path),
+        "precision": overall["precision"],
+        "recall": overall["recall"],
+        "f1": overall["f1"],
+        "yes_ratio": overall["yes_ratio"],
+        "true_yes_ratio": (overall["tp"] + overall["fn"]) / overall["total"],
+        "overall_fpr": overall["false_positive_rate"],
+        "adversarial_fpr": metrics["adversarial"]["false_positive_rate"],
+    }
 
 
 def choose(baseline: dict[str, Any], candidates: list[dict[str, Any]]) -> dict[str, Any]:
-    eligible = [row for row in candidates if row["adversarial_fpr"] <= baseline["adversarial_fpr"] + .01 and row["precision"] >= baseline["precision"] - .01]
-    if not eligible: return {"status": "no_eligible_checkpoint", "baseline": baseline, "candidates": candidates, "selected": None}
+    constraints = {
+        "overall_fpr_max": baseline["overall_fpr"] + FPR_TOLERANCE,
+        "adversarial_fpr_max": baseline["adversarial_fpr"] + FPR_TOLERANCE,
+        "precision_min": baseline["precision"] - PRECISION_TOLERANCE,
+        "recall_tie_window": RECALL_TIE_WINDOW,
+    }
+    eligible = [
+        row
+        for row in candidates
+        if row["overall_fpr"] <= constraints["overall_fpr_max"]
+        and row["adversarial_fpr"] <= constraints["adversarial_fpr_max"]
+        and row["precision"] >= constraints["precision_min"]
+    ]
+    result = {
+        "protocol": "dev2k_fpr_constrained_v1",
+        "constraints": constraints,
+        "baseline": baseline,
+        "candidates": candidates,
+        "eligible": eligible,
+    }
+    if not eligible:
+        return {**result, "status": "no_eligible_checkpoint", "selected": None}
     # Recall is primary. Candidates within 0.2 percentage points use fixed tie-breakers.
     best_recall = max(row["recall"] for row in eligible)
-    close = [row for row in eligible if best_recall - row["recall"] < .002]
-    selected = sorted(close, key=lambda row: (-row["f1"], row["adversarial_fpr"], abs(row["yes_ratio"] - row["true_yes_ratio"]), row["path"]))[0]
-    return {"status": "selected", "baseline": baseline, "candidates": candidates, "eligible": eligible, "selected": selected}
+    close = [row for row in eligible if best_recall - row["recall"] < RECALL_TIE_WINDOW]
+    selected = sorted(
+        close,
+        key=lambda row: (
+            -row["f1"],
+            row["overall_fpr"],
+            row["adversarial_fpr"],
+            abs(row["yes_ratio"] - row["true_yes_ratio"]),
+            row["path"],
+        ),
+    )[0]
+    return {**result, "status": "selected", "selected": selected}
 
 
 def main() -> None:

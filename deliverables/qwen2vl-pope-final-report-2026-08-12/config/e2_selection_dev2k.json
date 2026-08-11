@@ -1,51 +1,64 @@
 {
-  "status": "no_eligible_checkpoint",
+  "protocol": "dev2k_fpr_constrained_v1",
+  "constraints": {
+    "overall_fpr_max": 0.031,
+    "adversarial_fpr_max": 0.04603603603603604,
+    "precision_min": 0.9670742358078602,
+    "recall_tie_window": 0.002
+  },
   "baseline": {
-    "path": "results/qlora_evaluations/e0_base_2k_dev_256vt_metrics.json",
+    "path": "results\\qlora_evaluations\\e0_base_2k_dev_256vt_metrics.json",
     "precision": 0.9770742358078602,
     "recall": 0.895,
     "f1": 0.9342379958246346,
     "yes_ratio": 0.458,
     "true_yes_ratio": 0.5,
+    "overall_fpr": 0.021,
     "adversarial_fpr": 0.036036036036036036
   },
   "candidates": [
     {
-      "path": "results/qlora_evaluations/e2_checkpoint-500_dev_256vt_metrics.json",
+      "path": "results\\qlora_evaluations\\e2_checkpoint-500_dev_256vt_metrics.json",
       "precision": 0.9484638255698712,
       "recall": 0.957,
       "f1": 0.9527127924340467,
       "yes_ratio": 0.5045,
       "true_yes_ratio": 0.5,
+      "overall_fpr": 0.052,
       "adversarial_fpr": 0.09309309309309309
     },
     {
-      "path": "results/qlora_evaluations/e2_checkpoint-1000_dev_256vt_metrics.json",
+      "path": "results\\qlora_evaluations\\e2_checkpoint-1000_dev_256vt_metrics.json",
       "precision": 0.9645030425963489,
       "recall": 0.951,
       "f1": 0.957703927492447,
       "yes_ratio": 0.493,
       "true_yes_ratio": 0.5,
+      "overall_fpr": 0.035,
       "adversarial_fpr": 0.06606606606606606
     },
     {
-      "path": "results/qlora_evaluations/e2_checkpoint-1500_dev_256vt_metrics.json",
+      "path": "results\\qlora_evaluations\\e2_checkpoint-1500_dev_256vt_metrics.json",
       "precision": 0.943359375,
       "recall": 0.966,
       "f1": 0.9545454545454545,
       "yes_ratio": 0.512,
       "true_yes_ratio": 0.5,
+      "overall_fpr": 0.058,
       "adversarial_fpr": 0.0990990990990991
     },
     {
-      "path": "results/qlora_evaluations/e2_checkpoint-2000_dev_256vt_metrics.json",
+      "path": "results\\qlora_evaluations\\e2_checkpoint-2000_dev_256vt_metrics.json",
       "precision": 0.9588353413654619,
       "recall": 0.955,
       "f1": 0.9569138276553106,
       "yes_ratio": 0.498,
       "true_yes_ratio": 0.5,
+      "overall_fpr": 0.041,
       "adversarial_fpr": 0.07207207207207207
     }
   ],
+  "eligible": [],
+  "status": "no_eligible_checkpoint",
   "selected": null
 }

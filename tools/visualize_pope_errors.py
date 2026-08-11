@@ -1,7 +1,7 @@
 """Build an offline visual error-review page for a POPE evaluation run.
 
 Example:
-    python visualize_pope_errors.py --run-name smoke
+    python tools/visualize_pope_errors.py --run-name smoke
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ from typing import Any
 from datasets import DownloadConfig, load_dataset
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = Path(__file__).resolve().parents[1]
 RESULTS_DIR = PROJECT_DIR / "results"
 DEFAULT_CACHE_DIR = Path(os.environ.get("HF_DATASETS_CACHE", Path.home() / ".cache" / "huggingface" / "datasets"))
 DATASET_ID = "lmms-lab/POPE"

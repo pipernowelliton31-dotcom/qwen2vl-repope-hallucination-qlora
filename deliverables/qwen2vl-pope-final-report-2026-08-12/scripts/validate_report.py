@@ -36,6 +36,41 @@ def main() -> None:
     assert "qwen2vl2b_baseline_repope_metrics" not in data_js
     assert "3056/169/4477/483" not in data_js
 
+    config = json.loads((REPORT_DIR / "config" / "qlora_experiments.json").read_text(encoding="utf-8"))
+    data_config = config["data"]
+    assert data_config["dev_source_size"] == 3000
+    assert data_config["dev_selection_size"] == 2000
+    assert data_config["dev_selection_quotas"] == {
+        "random": {"yes": 334, "no": 334},
+        "popular": {"yes": 333, "no": 333},
+        "adversarial": {"yes": 333, "no": 333},
+    }
+    assert "dev_size" not in data_config and "dev_per_split" not in data_config
+
+    selections = {
+        experiment: json.loads(
+            (REPORT_DIR / "config" / f"{experiment}_selection_dev2k.json").read_text(encoding="utf-8")
+        )
+        for experiment in ("e1", "e2", "e3", "e4")
+    }
+    for selection in selections.values():
+        assert selection["protocol"] == "dev2k_fpr_constrained_v1"
+        constraints = selection["constraints"]
+        assert abs(constraints["overall_fpr_max"] - 0.031) < 1e-12
+        assert abs(constraints["adversarial_fpr_max"] - 0.04603603603603604) < 1e-12
+        assert abs(constraints["precision_min"] - 0.9670742358078602) < 1e-12
+        for candidate in selection["eligible"]:
+            assert candidate["overall_fpr"] <= constraints["overall_fpr_max"]
+            assert candidate["adversarial_fpr"] <= constraints["adversarial_fpr_max"]
+            assert candidate["precision"] >= constraints["precision_min"]
+    assert selections["e1"]["status"] == selections["e2"]["status"] == "no_eligible_checkpoint"
+    assert selections["e3"]["selected"]["path"].replace("\\", "/").endswith(
+        "e3_checkpoint-1000_dev_256vt_metrics.json"
+    )
+    assert selections["e4"]["selected"]["path"].replace("\\", "/").endswith(
+        "e4_checkpoint-1000_dev_256vt_metrics.json"
+    )
+
     assert len(cases) == 25 and len(data["errorCases"]) == 25
     assert len({case["imageSource"] for case in cases}) == 25
     for model in MODEL_FILES:
@@ -77,7 +112,10 @@ def main() -> None:
         assert relative in html and (REPORT_DIR / relative).is_file()
     assert not (REPORT_DIR / "metrics" / "qwen2vl2b_baseline_repope_metrics.json").exists()
     mode = "package + frozen predictions" if deep_check else "standalone package"
-    print(f"PASS ({mode}): fresh baseline, 25 cases, metrics, images, and offline assets are consistent.")
+    print(
+        f"PASS ({mode}): fresh baseline, dev protocol, checkpoint rule, "
+        "25 cases, metrics, images, and offline assets are consistent."
+    )
 
 
 if __name__ == "__main__":
